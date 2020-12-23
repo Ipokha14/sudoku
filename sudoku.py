@@ -15,60 +15,71 @@ board = [
 
 def board_solver(bo):
 
-
+    #choosing a place in the grid to make a guess
     empty_cell = find_empty(bo)
-    if not empty_cell:
-        return True
-    else:
-        row = empty_cell[0]
-        col = empty_cell[1]
 
+    row = empty_cell[0]
+    col = empty_cell[1]
+
+    #if there are no places left to guess, then puzzle is solved!
+    if row is None:
+        return True
+
+    #if there is a place to guess, then make a guess between 1-9
     for num in range(1,10):
+        #if the guess is valid, switch the empty value with the guessed nu,
         if valid(bo, num,(row,col)):
             bo[row][col] = num
-            bool_ = board_solver(bo)
-            if bool_:
+            #recursively call the board solver function to guess remaining values
+            #in the puzze
+            if board_solver(bo):
                 return True
+        #if the recursion could not arrive at valid solution, then we start with
+        # a new guess at initial position where we had started guessing
+        bo[row][col] = 0
 
-            bo[row][col] = 0
+    #if nothing works at the end, return false, because puzzle is unsolvable
     return False
 
 
 
 def find_empty(bo):
-    for i in range(len(bo)):
-        for j in range(len(bo[0])):
+    #find a emptly place in the puzzle
+    for i in range(len(bo)): # 1-9
+        for j in range(len(bo[0])): #1-9
             if bo[i][j] == 0:
                 return (i,j)
-    return None
+    #if no empty cells in puzzle, return tuple with None values
+    return None, None
 
 
 
 def valid(bo,num,pos):
-    #checking rows to see if num exists
+
     x_pos = pos[0]
     y_pos = pos[1]
 
-    for i in range(0,len(bo)):
-        if bo[x_pos][i] == num and y_pos != i:
-            return False
+    #checking rows to see if num exists
+    row_vals = bo[x_pos]
+    if num in row_vals:
+        return False
 
-    #checking columns to see if num exists
-    for i in range(0,len(bo)):
-        if bo[i][y_pos] == num and x_pos != i:
-            return False
-    #check 3*3 boxes to see if the number exists
+    #checking rows to see if num exists
+    col_vals = [bo[i][y_pos] for i in range(len(bo))]
+    if num in col_vals:
+        return False
 
-    box_x = (y_pos // 3)
-    box_y = (x_pos // 3)
+    #checking rows to see if num exists in 3*3 grids
+    x_grid = (x_pos // 3) * 3
+    y_grid = (y_pos // 3) * 3
 
-    for i in range(box_y * 3, box_y * 3 + 3):
-        for j in range(box_x * 3, box_x *3 + 3):
-            if bo[i][j] == num and (i,j) != pos:
+    for row in range(x_grid, x_grid + 3):
+        for col in range(y_grid, y_grid + 3):
+            if bo[row][col] == num:
                 return False
 
     return True
-#
+
 def print_board(bo):
     length = len(bo)
     for i in range(length):
@@ -76,15 +87,14 @@ def print_board(bo):
             print("===============================")
         for j in range(len(bo[0])):
             if  j % 3 == 0 and j!= 0:
-                print(" | ", end = "")
+                print(" | ", end = "") # don't print new line
             if j == 8:
                 print(bo[i][j])
             else:
-                print(str(bo[i][j]) , " ", end = "" )
+                print(str(bo[i][j]) , " ", end = "" ) #dont print newline
 
 
 if __name__ == "__main__":
-
     print_board(board)
     print("***************************************")
     t1 = time.time()
@@ -92,13 +102,3 @@ if __name__ == "__main__":
     t2 = time.time()
     print_board(board)
     print(f"Solved in {round((t2-t1), 3)} seconds! ")
-
-
-# print("Unsolved")
-# print_board(board)
-# t1 = time.time()
-# board_solver(board)
-# print("Solved")
-# t2 = time.time()
-# print_board(board)
-# print(f"Solved in {round((t2-t1),3)} seconds!")
