@@ -13,7 +13,7 @@ board = [
 [0, 9, 0, 0, 0, 0, 4, 0, 0]
 ]
 
-def solve(bo):
+def board_solver(bo):
     find = find_empty(bo)
     if not find:
         return True
@@ -23,7 +23,7 @@ def solve(bo):
     for i in range(1,10):
         if valid(bo , i , (row,col)):
             bo[row][col] = i
-            if solve(bo):
+            if board_solver(bo):
                 return True
             bo[row][col] = 0
 
@@ -74,8 +74,8 @@ def find_empty(bo):
 print("Unsolved")
 print_board(board)
 t1 = time.time()
-solve(board)
+board_solver(board)
 print("Solved")
 t2 = time.time()
 print_board(board)
-print(t2-t1)
+print(f"Solved in {round((t2-t1),3)} seconds!")
