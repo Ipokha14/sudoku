@@ -14,35 +14,53 @@ board = [
 ]
 
 def board_solver(bo):
-    find = find_empty(bo)
-    if not find:
+
+
+    empty_cell = find_empty(bo)
+    if not empty_cell:
         return True
     else:
-        row, col = find
+        row = empty_cell[0]
+        col = empty_cell[1]
 
-    for i in range(1,10):
-        if valid(bo , i , (row,col)):
-            bo[row][col] = i
-            if board_solver(bo):
+    for num in range(1,10):
+        if valid(bo, num,(row,col)):
+            bo[row][col] = num
+            bool_ = board_solver(bo)
+            if bool_:
                 return True
-            bo[row][col] = 0
 
+            bo[row][col] = 0
     return False
 
 
-def valid(bo,num,pos):
-    #checking rows
-    for i in range(len(bo[0])):
-        if bo[pos[0]][i] == num and pos[1] != i:
-            return False
-    #checking columns
-    for i in range(len(bo)):
-        if bo[i][pos[1]] == num and pos[0] != i:
-            return False
-    #check boxes
 
-    box_x = pos[1] // 3
-    box_y = pos[0] // 3
+def find_empty(bo):
+    for i in range(len(bo)):
+        for j in range(len(bo[0])):
+            if bo[i][j] == 0:
+                return (i,j)
+    return None
+
+
+
+def valid(bo,num,pos):
+    #checking rows to see if num exists
+    x_pos = pos[0]
+    y_pos = pos[1]
+
+    for i in range(0,len(bo)):
+        if bo[x_pos][i] == num and y_pos != i:
+            return False
+
+    #checking columns to see if num exists
+    for i in range(0,len(bo)):
+        if bo[i][y_pos] == num and x_pos != i:
+            return False
+    #check 3*3 boxes to see if the number exists
+
+    box_x = (y_pos // 3)
+    box_y = (x_pos // 3)
 
     for i in range(box_y * 3, box_y * 3 + 3):
         for j in range(box_x * 3, box_x *3 + 3):
@@ -50,7 +68,7 @@ def valid(bo,num,pos):
                 return False
 
     return True
-
+#
 def print_board(bo):
     length = len(bo)
     for i in range(length):
@@ -64,18 +82,23 @@ def print_board(bo):
             else:
                 print(str(bo[i][j]) , " ", end = "" )
 
-def find_empty(bo):
-    for i in range(len(bo)):
-        for j in range(len(bo[i])):
-            if bo[i][j] == 0:
-                return (i,j)
-    return None
 
-print("Unsolved")
-print_board(board)
-t1 = time.time()
-board_solver(board)
-print("Solved")
-t2 = time.time()
-print_board(board)
-print(f"Solved in {round((t2-t1),3)} seconds!")
+if __name__ == "__main__":
+
+    print_board(board)
+    print("***************************************")
+    t1 = time.time()
+    board_solver(board)
+    t2 = time.time()
+    print_board(board)
+    print(f"Solved in {round((t2-t1), 3)} seconds! ")
+
+
+# print("Unsolved")
+# print_board(board)
+# t1 = time.time()
+# board_solver(board)
+# print("Solved")
+# t2 = time.time()
+# print_board(board)
+# print(f"Solved in {round((t2-t1),3)} seconds!")
